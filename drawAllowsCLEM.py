@@ -30,14 +30,14 @@ def main():
   # Loaindg options
   argvs = sys.argv
   argc = len(argvs)
-  if (argc !=4):
+  if (argc !=3):
     print("Usage: # python %s CSV-filename output-imagename.jpg" % argvs[0]) 
     print(argc)
     quit()
 
   inputImage=argvs[1]
   outputImage=argvs[2]
-  overwriteImage=argvs[3]
+#  overwriteImage=argvs[3]
 
   # Preparing canvas w/ white background
   # Canvas size is 1024x1024x3(RGB)
@@ -46,7 +46,8 @@ def main():
 #  im.fill(255)
 
   # In case, reading image from a file.
-  im = cv2.imread(overwriteImage)
+#  im = cv2.imread(overwriteImage)
+  im = cv2.imread(outputImage)
 
   # Opening CSV file
   file = open(inputImage, 'r')
