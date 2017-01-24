@@ -41,13 +41,13 @@ def main():
 
   # Preparing canvas w/ white background
   # Canvas size is 1024x1024x3(RGB)
-#  size = 1024, 1024, 3
-#  im = np.zeros(size, dtype=np.uint8)
-#  im.fill(255)
+  size = 1024, 1024, 3
+  im = np.zeros(size, dtype=np.uint8)
+  im.fill(255)
 
   # In case, reading image from a file.
 #  im = cv2.imread(overwriteImage)
-  im = cv2.imread(outputImage)
+#  im = cv2.imread(outputImage)
 
   # Opening CSV file
   file = open(inputImage, 'r')
