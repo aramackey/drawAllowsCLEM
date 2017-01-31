@@ -1,6 +1,30 @@
 # -*- coding: utf-8 -*-
+
+"""Option for drawing allows program.
+Usage:
+prog.py [--scale=<px>] <input_CSV> <output_file>
+prog.py [-h | --help]
+
+Options:
+  <input_CSV>=required_option   Input file CSV coordinate file.
+  <output_file>=require_option  Output file name. File format is JPEG as default.
+  --scale=<px>                  Place scale bar at bottom right of the image.
+  -h, --help                    show this help message and exit program.
+"""
+
 import cv2, csv, sys
 import numpy as np
+from docopt import docopt
+from schema import Schema, And, Or, Use, Optional, SchemaError
+
+def validate_arguments(arguments):
+  schema = Schema({
+    '<input_CSV>': [Use(open, error="Files should be readable")],
+    '<output_file>': [Use(open, error="Files should be readable")],
+    '--scale': Or(None, And(Use(int), lambda n: 1<=n), error="--scale should be positive integer greater than 1"),
+  })
+  arguments = schema.validate(arguments)
+  return arguments
 
 # Drawing arrow from start-XY and end-XY coords
 def draw_arrow(im, pt1, pt2, color, thickness=1, line_type=8, shift=0, w=5, h=10):
@@ -26,17 +50,12 @@ def set_scaleBar(im, scale, thickness):
   cv2.rectangle(im, start, end, (0,0,0), -1)
 
 def main():
+  arguments = docopt(__doc__)
+# arguments = validate_arguments(arguments)
+  print(arguments)
 
-  # Loaindg options
-  argvs = sys.argv
-  argc = len(argvs)
-  if (argc !=3):
-    print("Usage: # python %s CSV-filename output-imagename.jpg" % argvs[0]) 
-    print(argc)
-    quit()
-
-  inputImage=argvs[1]
-  outputImage=argvs[2]
+  inputImage=arguments['<input_CSV>']
+  outputImage=arguments['<output_file>']
 #  overwriteImage=argvs[3]
 
   # Preparing canvas w/ white background
