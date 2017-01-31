@@ -3,12 +3,15 @@
 """Option for drawing allows program.
 Usage:
 prog.py [--scale=<px>] <input_CSV> <output_file>
+prog.py [--scale=<px>] --overwrite=<file_name> <input_CSV> <output_file>
 prog.py [-h | --help]
 
 Options:
   <input_CSV>=required_option   Input file CSV coordinate file.
+  <input_file>                  Input image file. File format should be JPEG.
   <output_file>=require_option  Output file name. File format is JPEG as default.
   --scale=<px>                  Place scale bar at bottom right of the image.
+  --overwrite=<file_name>       Overwrite arrows to a provided image.
   -h, --help                    show this help message and exit program.
 """
 
@@ -20,6 +23,7 @@ from schema import Schema, And, Or, Use, Optional, SchemaError
 def validate_arguments(arguments):
   schema = Schema({
     '<input_CSV>': [Use(open, error="Files should be readable")],
+    '<input_file>': [Use(open, error="Files should be readable")],
     '<output_file>': [Use(open, error="Files should be readable")],
     '--scale': Or(None, And(Use(int), lambda n: 1<=n), error="--scale should be positive integer greater than 1"),
   })
@@ -54,25 +58,31 @@ def main():
 # arguments = validate_arguments(arguments)
   print(arguments)
 
-  inputImage=arguments['<input_CSV>']
+  inputCSV=arguments['<input_CSV>']
   outputImage=arguments['<output_file>']
-#  overwriteImage=argvs[3]
+  if arguments['--overwrite'] is not None:
+    overwriteImage=arguments['--overwrite']
 
-  # Preparing canvas w/ white background
-  # Canvas size is 1024x1024x3(RGB)
-  size = 1024, 1024, 3
-  im = np.zeros(size, dtype=np.uint8)
-  im.fill(255)
+########
+# Preparing canvas w/ white background
+# Canvas size is 1024x1024x3(RGB)
+########
+# In case of "overwrite mode" ON
+# Read a provided image as a canvas.
+  if arguments['--overwrite'] is not None:
+    im = cv2.imread(overwriteImage)
+# In case of "overwrite mode" OFF
+# A canvas will be created.
+  else:
+    size = 1024, 1024, 3
+    im = np.zeros(size, dtype=np.uint8)
+    im.fill(255)
 
-  # In case, reading image from a file.
-#  im = cv2.imread(overwriteImage)
-#  im = cv2.imread(outputImage)
-
-  # Opening CSV file
-  file = open(inputImage, 'r')
+# Opening CSV file
+  file = open(inputCSV, 'r')
   dataReader = csv.reader(file)
 
-  # Drawing arrows
+# Drawing arrows
   for coords_char in dataReader:
     coords = [int(i) for i in coords_char]
     print(coords[0], coords[1], coords[2], coords[3])
@@ -85,7 +95,8 @@ def main():
   file.close()
 
   # Drawing scale Bar 
-  #set_scaleBar(im, 100, 20)
+  if arguments["--scale"] is not None:
+    set_scaleBar(im, int(arguments["--scale"]), 20)
   
   # Displaying to the window
   #cv2.imshow("Test", im)
