@@ -2,7 +2,7 @@
 
 """Option for drawing allows program.
 Usage:
-prog.py [--scale=<px>] <input_CSV> <output_file>
+prog.py [--scale=<px>] [--alignpoints=<file_name>] <input_CSV> <output_file>
 prog.py [--scale=<px>] --overwrite=<file_name> <input_CSV> <output_file>
 prog.py [-h | --help]
 
@@ -10,6 +10,7 @@ Options:
   <input_CSV>=required_option   Input file CSV coordinate file.
   <input_file>                  Input image file. File format should be JPEG.
   <output_file>=require_option  Output file name. File format is JPEG as default.
+  --alignpoints=<file_name>     Draw points of alignment points.
   --scale=<px>                  Place scale bar at bottom right of the image.
   --overwrite=<file_name>       Overwrite arrows to a provided image.
   -h, --help                    show this help message and exit program.
@@ -88,13 +89,23 @@ def main():
     print(coords[0], coords[1], coords[2], coords[3])
     # If the two points have same coordinate, a point will draw insted of an arrow
     if coords[0] == coords [2] and coords[1] == coords [3]:
-      draw_point(im,(coords[0],coords[1]), 3, (0,200,0), 2)
+      draw_point(im,(coords[0],coords[1]), 3, (0,0,200), 2)
       print ("SAME POINT")
     else:
       draw_arrow(im,(coords[0],coords[1]), (coords[2],coords[3]), (0,0,200), 5) 
   file.close()
 
-  # Drawing scale Bar 
+# Drawing alignment points
+  if arguments['--alignpoints'] is not None:
+    align_CSV=arguments['--alignpoints']
+    file = open(align_CSV, 'r')
+    dataReader = csv.reader(file)
+
+    for coords_char in dataReader:
+      coords = [int(i) for i in coords_char]
+      draw_point(im,(coords[0],coords[1]), 3, (0,200,0), 2)
+
+# Drawing scale Bar 
   if arguments["--scale"] is not None:
     set_scaleBar(im, int(arguments["--scale"]), 20)
   
