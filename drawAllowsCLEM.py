@@ -75,7 +75,7 @@ def main():
 # In case of "overwrite mode" OFF
 # A canvas will be created.
   else:
-    size = 1024, 1024, 3
+    size = 2048, 2048, 3
     im = np.zeros(size, dtype=np.uint8)
     im.fill(255)
 
